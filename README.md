@@ -91,6 +91,8 @@ Agents move in a periodic space and have a personal 'state' as mentioned above. 
 ## _Data Collection_
 
 The model exports data in _.csv_ format. It creates a unique folder within the user-defined data_folder (in the config.json), in which it saves a single .csv file for each Observer, as defined in the config file. Sampling frequency and output name of each files are also controled by the config.
+The config is also copied to the saving directory, along with an empty txt file that has its initial name. All details concerning data collection are defined in its _Analysis_ section, organized in different observers.
+
 In its current state, the model exports (1) timeseries of positions, heading, speed etc for each agent, (2) timeseries on information of the neighbors of each agent (id, distance to, bearing angle etc), (3) information about the flock(s) that form during the simulation, (4) timeseries of the effect of coorindation forces acting on each agent. More observers are present in the model and can be used by including them in the config file.
 
 ## Authors
