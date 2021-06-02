@@ -1,0 +1,214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="model\simulation.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glad\glad.c">
+      <Filter>glad</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glad\glad_wgl.c">
+      <Filter>glad</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\ac3d.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\bmfont.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\buffer.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\camera.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\debug.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\imm.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\text.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\texture.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\vertexarray.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="libs\glsl\wgl_context.cpp">
+      <Filter>glad\glsl</Filter>
+    </ClCompile>
+    <ClCompile Include="pigeon_model.cpp" />
+    <ClCompile Include="simgl\AppWin.cpp">
+      <Filter>simgl</Filter>
+    </ClCompile>
+    <ClCompile Include="simgl\Renderer.cpp">
+      <Filter>simgl</Filter>
+    </ClCompile>
+    <ClCompile Include="simgl\shader.cpp">
+      <Filter>simgl</Filter>
+    </ClCompile>
+    <ClCompile Include="agents\pigeon.cpp">
+      <Filter>agents</Filter>
+    </ClCompile>
+    <ClCompile Include="agents\predator.cpp">
+      <Filter>agents</Filter>
+    </ClCompile>
+    <ClCompile Include="model\flock.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
+    <ClCompile Include="simgl\csDevice.cpp">
+      <Filter>simgl</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="model\model.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="model\simulation.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\avoid_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\cohere_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\align_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\no_interacting_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="model\observer.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="simgl\AppWin.h">
+      <Filter>simgl</Filter>
+    </ClInclude>
+    <ClInclude Include="simgl\Renderer.h">
+      <Filter>simgl</Filter>
+    </ClInclude>
+    <ClInclude Include="simgl\shader.h">
+      <Filter>simgl</Filter>
+    </ClInclude>
+    <ClInclude Include="agents\pigeon.hpp">
+      <Filter>agents</Filter>
+    </ClInclude>
+    <ClInclude Include="agents\predator.hpp">
+      <Filter>agents</Filter>
+    </ClInclude>
+    <ClInclude Include="model\action_base.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="agents\agents_fwd.hpp">
+      <Filter>agents</Filter>
+    </ClInclude>
+    <ClInclude Include="agents\agents.hpp">
+      <Filter>agents</Filter>
+    </ClInclude>
+    <ClInclude Include="model\state_base.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="states\transient.hpp">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="states\persistent.hpp">
+      <Filter>states</Filter>
+    </ClInclude>
+    <ClInclude Include="model\transitions.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="model\while_topo.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="model\flight_control.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\avoid_pred_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\cohere_speed_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="model\flight.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="model\flock.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\cmd_line.h">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\game_watches.hpp">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\math.hpp">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\rndutils.hpp">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\torus.hpp">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="libs\graph.hpp">
+      <Filter>libs</Filter>
+    </ClInclude>
+    <ClInclude Include="simgl\csDevice.hpp">
+      <Filter>simgl</Filter>
+    </ClInclude>
+    <ClInclude Include="analysis\analysis.hpp">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="analysis\analysis_obs.hpp">
+      <Filter>analysis</Filter>
+    </ClInclude>
+    <ClInclude Include="model\init_cond.hpp">
+      <Filter>model</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\predator_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="actions\hunt_actions.hpp">
+      <Filter>actions</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="model">
+      <UniqueIdentifier>{e3a79fcf-b9cb-4bc0-8160-b0dba889780f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glad">
+      <UniqueIdentifier>{d040f8f8-46c4-4e5d-9393-b94a2710a17c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="actions">
+      <UniqueIdentifier>{9265acee-f292-4798-b366-909afc14d504}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="simgl">
+      <UniqueIdentifier>{8f992277-e05b-4120-a053-7f11fb9e52b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="states">
+      <UniqueIdentifier>{fd72d231-7e00-441d-8acd-31b11b9c310e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="agents">
+      <UniqueIdentifier>{5e0b7262-674b-4b05-b606-0f49f9be5bf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="libs">
+      <UniqueIdentifier>{0b7995ff-ef30-44f3-bedd-ee55ba723a7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="analysis">
+      <UniqueIdentifier>{07cbe96c-1af8-40e8-b567-41107f709351}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glad\glsl">
+      <UniqueIdentifier>{107e3409-bf94-49e7-b8bc-ec61cfafe8f1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="pigeon_model.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="bin\debug_run.bat" />
+  </ItemGroup>
+</Project>

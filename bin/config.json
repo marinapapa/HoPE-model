@@ -1,0 +1,48 @@
+{
+  "Simulation": {
+    "WH": 500,
+    "dt": 0.005,
+    "speedup": 1,
+    "Tmax": 500,
+    "terrain": "sky_texture.png",
+    "flockDetection": {
+      "threshold": 10,
+      "interval": 0.05
+    },
+    "numThreads": 8,
+
+    "Analysis": {
+      "data_folder": "pigeon_data_test",
+      "Observers": [
+        {
+          "type": "TimeSeries",
+          "sample_freq": 0.2,
+          "output_name": "time_series"
+        },
+        {
+          "type": "NeighbData",
+          "sample_freq": 0.2,
+          "output_name": "all_neighbors"
+        },
+        {
+          "type": "FlockData",
+          "sample_freq": 0.2,
+          "output_name": "flocks"
+        },
+        {
+          "type": "CoordForces",
+          "sample_freq": 0.2,
+          "output_name": "forces"
+        }
+      ],
+      "Externals": {
+        "configName": ""
+      }
+    }  
+  },
+  "Trails": {
+    "interval": 0.01,
+    "length": 2,
+    "fade": 0.75
+  }
+}

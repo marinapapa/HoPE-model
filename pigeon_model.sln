@@ -1,0 +1,58 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pigeon_model", "pigeon_model.vcxproj", "{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38} = {9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "species_json", "species_json", "{4ACFD0D7-0745-4397-9171-18EEB274CB8F}"
+	ProjectSection(SolutionItems) = preProject
+		bin\species\pigeon.json = bin\species\pigeon.json
+		bin\species\predator.json = bin\species\predator.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "config", "config", "{59893594-988A-4348-A883-0DA5F5CC0CD7}"
+	ProjectSection(SolutionItems) = preProject
+		bin\config.json = bin\config.json
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "json", "libs\json\json.vcxproj", "{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Debug|x64.ActiveCfg = Debug|x64
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Debug|x64.Build.0 = Debug|x64
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Debug|x86.ActiveCfg = Debug|Win32
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Debug|x86.Build.0 = Debug|Win32
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Release|x64.ActiveCfg = Release|x64
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Release|x64.Build.0 = Release|x64
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Release|x86.ActiveCfg = Release|Win32
+		{B2111C7B-545E-4EE1-B500-83C6FAE77AA5}.Release|x86.Build.0 = Release|Win32
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Debug|x64.ActiveCfg = Debug|x64
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Debug|x64.Build.0 = Debug|x64
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Debug|x86.ActiveCfg = Debug|Win32
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Debug|x86.Build.0 = Debug|Win32
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Release|x64.ActiveCfg = Release|x64
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Release|x64.Build.0 = Release|x64
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Release|x86.ActiveCfg = Release|Win32
+		{9DAB7DFF-9E6D-4E91-879C-ACEC14A31B38}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4ACFD0D7-0745-4397-9171-18EEB274CB8F} = {59893594-988A-4348-A883-0DA5F5CC0CD7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4F5477DA-119D-4073-91E4-DC74869BE585}
+	EndGlobalSection
+EndGlobal

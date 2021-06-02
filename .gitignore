@@ -1,0 +1,6 @@
+tmp
+.vs
+/bin/Debug
+*.ilk
+*.pdb
+/bin/simulated_data

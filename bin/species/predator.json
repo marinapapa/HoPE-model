@@ -1,0 +1,123 @@
+{
+  "Pred": {
+    "N": 1,
+    "shape": "falcon.ac",
+    "scale": 3,
+
+    "InitCondit": {
+      "type": "random"
+    },
+
+    "aero": {
+      "maxSpeed": 30,
+      "minSpeed": 10,
+      "cruiseSpeedSd": 0,
+      "bodyMass": 0.8,
+      "bodyMassSd": 0,
+      "wingSpan": 0.75,
+      "wingArea": 0.28
+    },
+
+    "states": [
+      {
+        "name": "persistent",
+        "tr": 0.05,
+        "duration": 10,
+        "description": "hold pattern",
+
+        "aeroState": {
+          "cruiseSpeed": 10,
+          "w": 5
+        },
+        "actions": [
+          {
+            "name": "wiggle",
+            "w": 1
+          },
+          {
+            "name": "avoid_closest_prey",
+            "w": 5
+          },
+          {
+            "name": "hold_current",
+            "w": 25
+          }
+        ]
+      },
+      {
+        "name": "persistent",
+        "duration": 20,
+        "tr": 0.05,
+        "description": "shadowing",
+        "aeroState": {
+          "cruiseSpeed": 18,
+          "w": 5
+        },
+        "actions": [
+          {
+            "name": "select_flock",
+            "selection": "biggest"
+          },
+          {
+            "bearing": 150,
+            "distance": 40,
+            "name": "shadowing",
+            "placement": 1,
+            "prey_speed_scale": 1,
+            "w": 5
+          }
+        ]
+      },
+      {
+        "name": "persistent",
+        "tr": 0.05,
+        "duration": 15,
+        "description": "chase closest prey",
+        "aeroState": {
+          "cruiseSpeed": 18,
+          "w": 5
+        },
+        "actions": [
+          {
+            "name": "wiggle",
+            "w": 0.5
+          },
+          {
+            "name": "chase_closest_prey",
+            "prey_speed_scale": 1.5,
+            "w": 5
+          }
+        ]
+      },
+      {
+        "name": "transient",
+        "tr": 0.05,
+        "description": "set - retreat",
+
+        "aeroState": {
+          "cruiseSpeed": 12,
+          "w": 1
+        },
+        "actions": [
+          {
+            "name": "set_retreat",
+            "distAway": 300,
+            "speed": 10
+          }
+        ]
+      }
+    ],
+    "transitions": {
+      "name": "piecewise_linear_interpolator",
+      "TM": [
+        [
+          [ 0, 1, 0, 0 ],
+          [ 0, 0, 1, 0 ],
+          [ 0, 0, 0, 1 ],
+          [ 1, 0, 0, 0 ]
+        ]
+      ],
+      "edges": [ 0 ]
+    }
+  }
+}

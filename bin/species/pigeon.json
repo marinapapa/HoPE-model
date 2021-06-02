@@ -1,0 +1,82 @@
+{
+  "Pigeon": {
+    "N": 10,
+    "shape": "starling.ac",
+    "scale": 1,
+
+    "InitCondit": {
+      "type": "flock",
+      "speed": 5,
+      "pos": [ -0, 0 ],
+      "dir": [ 1, 0 ],
+      "radius": 10,
+      "degdev": 10
+    },
+    "aero": {
+      "maxSpeed": 30,
+      "minSpeed": 5,
+      "cruiseSpeedSd": 2,
+      "bodyMass": 0.45,
+      "bodyMassSd": 0.0,
+      "wingSpan": 0.7,
+      "wingArea": 0.07
+    },
+    "states": [
+      {
+        "name": "transient",
+        "description": "normal flocking",
+        "tr": 0.2,
+
+        "aeroState": {
+          "cruiseSpeed": 14.0,
+          "w": 0.2
+        },
+
+        "actions": [
+          {
+            "name": "align_n",
+            "topo": 7,
+            "fov": 215,
+            "maxdist": 200,
+            "w": 7.5
+          },
+          {
+            "name": "cohere_turn_n_all",
+            "topo": 7,
+            "fov": 215,
+            "maxdist": 200,
+            "w": 2.5
+          },
+          {
+            "name": "cohere_accel_n_front",
+            "topo": 7,
+            "fov": 215,
+            "ffov": 180,
+            "maxdist": 200,
+            "min_accel_dist": 1.0,
+            "max_accel_dist": 10,
+            "decel_w": 0.5,
+            "w": 5
+          },
+          {
+            "name": "avoid_n_position",
+            "topo": 1,
+            "fov": 215,
+            "minsep": 1.0,
+            "maxdist": 200,
+            "w": 5
+          },
+          {
+            "name": "wiggle",
+            "w": 0.2
+          },
+          {
+            "name": "avoid_p_direction",
+            "minsep": 50,
+            "w": 2
+          }
+        ]
+      }
+    ]
+  }
+}
