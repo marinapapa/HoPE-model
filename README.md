@@ -77,8 +77,8 @@ Agents move in a periodic space and have a personal 'state' as mentioned above. 
 3. Space: pause/continue simulation
 4. Right Arrow: run 1 simulation step
 5. A: darkens background
-6. T: shows the position trail of each pigeon-agent
-7. Shift+T: shows the position trail of each predator-agent
+6. T: shows/hides the position trail of each pigeon-agent
+7. Shift+T: shows/hides the position trail of each predator-agent
 8. K: kills or revives predator-agents
 9. 1: applies colormap of id of pigeon-agents
 10. 2: applies colormap of speed of pigeon-agents
