@@ -2,7 +2,9 @@
 #define HUNT_ACTIONS_HPP_INCLUDED
 
 #include "model/action_base.hpp"
-#include "agents/pigeon.hpp"
+#include "agents/agents.hpp"
+//#include "agents/agents.hpp"
+//#include "agents/pigeon.hpp"
 
 namespace model {
 	namespace actions {

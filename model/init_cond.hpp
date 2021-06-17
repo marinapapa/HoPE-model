@@ -7,7 +7,9 @@
 #include <string>
 #include <filesystem>
 #include <libs/torus.hpp>
-#include "model.hpp"
+#include <glmutils/random.hpp>
+#include "model/model.hpp"
+#include "model/simulation.hpp"
 #include "model/json.hpp"
 
 
