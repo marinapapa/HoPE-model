@@ -1,7 +1,6 @@
 #ifndef PRED_HPP_INCLUDED
 #define PRED_HPP_INCLUDED
 
-#include <json/json.hpp>
 #include <torus.hpp>
 #include "states/transient.hpp"
 #include "states/persistent.hpp"
@@ -14,6 +13,7 @@
 #include "model/transitions.hpp"
 #include "model/flight_control.hpp"
 #include "model/flight.hpp"
+#include "model/json.hpp"
 
 
 namespace model {

@@ -3,7 +3,6 @@
 
 #include <istream>
 #include <ostream>
-#include <json/json.hpp>
 #include <torus.hpp>
 #include <glmutils/random.hpp>
 #include <glm/glm.hpp>
@@ -17,6 +16,7 @@
 #include "actions/no_interacting_actions.hpp"
 #include "model/flight_control.hpp"
 #include "model/flight.hpp"
+#include "model/json.hpp"
 
 
 namespace model {

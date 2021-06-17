@@ -62,6 +62,9 @@
     <ClCompile Include="simgl\csDevice.cpp">
       <Filter>simgl</Filter>
     </ClCompile>
+    <ClCompile Include="model\json.cpp">
+      <Filter>model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="model\model.hpp">
@@ -174,6 +177,9 @@
     </ClInclude>
     <ClInclude Include="actions\hunt_actions.hpp">
       <Filter>actions</Filter>
+    </ClInclude>
+    <ClInclude Include="model\json.hpp">
+      <Filter>model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

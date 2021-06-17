@@ -2,7 +2,7 @@
 #define MODEL_FLIGHT_ABC_HPP_INCLUDED
 
 #include <math.hpp>
-#include <json/json.hpp>
+#include "model/json.hpp"
 
 
 namespace model {

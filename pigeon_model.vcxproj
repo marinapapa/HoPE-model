@@ -198,6 +198,7 @@
     <ClCompile Include="libs\glsl\vertexarray.cpp" />
     <ClCompile Include="libs\glsl\wgl_context.cpp" />
     <ClCompile Include="model\flock.cpp" />
+    <ClCompile Include="model\json.cpp" />
     <ClCompile Include="model\simulation.cpp" />
     <ClCompile Include="pigeon_model.cpp" />
     <ClCompile Include="simgl\AppWin.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="model\flight_control.hpp" />
     <ClInclude Include="model\flock.hpp" />
     <ClInclude Include="model\init_cond.hpp" />
+    <ClInclude Include="model\json.hpp" />
     <ClInclude Include="model\observer.hpp" />
     <ClInclude Include="model\model.hpp" />
     <ClInclude Include="model\simulation.hpp" />

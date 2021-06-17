@@ -5,7 +5,7 @@
 #include <mutex>
 #include <glsl/context.h>
 #include <glsl/wgl_context.hpp>
-#include <json/json.hpp>
+#include "model/json.hpp"
 #include "agents/agents.hpp"
 #include "shader.h"
 #include "csDevice.hpp"

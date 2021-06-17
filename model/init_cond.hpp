@@ -6,9 +6,9 @@
 #include <vector>
 #include <string>
 #include <filesystem>
-#include <json/json.hpp>
 #include <libs/torus.hpp>
 #include "model.hpp"
+#include "model/json.hpp"
 
 
 namespace initial_conditions {

@@ -3,7 +3,7 @@
 #include <future>
 #include <thread>
 #include <tbb/tbb.h>
-#include <json/json.hpp>
+#include "model/json.hpp"
 #include "model/model.hpp"
 #ifdef WIN32
 # include "simgl/AppWin.h"

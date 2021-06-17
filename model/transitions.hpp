@@ -1,8 +1,8 @@
 #ifndef MODEL_TRANSITIONS_HPP_INCLUDED
 #define MODEL_TRANSITIONS_HPP_INCLUDED
 
-#include <json/json.hpp>
 #include <iostream>
+#include "model/json.hpp"
 
 namespace model {
   namespace transitions {
