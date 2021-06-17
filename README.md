@@ -3,10 +3,21 @@
 A two-dimensional agent-based model of flocking under predation, adjusted to the collective motion and collective escape of pigeons. First presented in the manuscript:
 _Papadopoulou, M., Hildenbrandt H., Sankey, D.W.E., Portugal S.J.,and Hemelrijk, C.K. "Self-organization of collective escape in pigeon flocks". Submitted._
 
-
 ## Prerequisites
-* Operating system: Windows 10, Linux (headless).
-* Visualization (Windows only) requires a graphic card with support for OpenGL 4.4 or later.
+
+### Windows
+* Operating system: Windows 10.
+* Graphic card with support for OpenGL 4.4 or later.
+
+### Linux
+To build the software under Linux (Debian packet system):
+```bash
+~$ sudo apt install libtbb-dev
+~$ sudo apt install libglm-dev
+~$ cd HoPe
+~/HoPe$ make
+~/HoPe$ make install   # creates the excecutable ./bin/Release/pigeons
+```
 
 # The model
 
