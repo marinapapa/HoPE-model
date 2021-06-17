@@ -1,6 +1,13 @@
 #ifndef MODEL_MODEL_HPP_INCLUDED
 #define MODEL_MODEL_HPP_INCLUDED
 
+#ifndef AGENTS_CONFIG_FWD
+#define AGENTS_CONFIG_FWD "agents/agents_fwd.hpp"
+#endif
+#ifndef AGENTS_CONFIG
+#define AGENTS_CONFIG "agents/agents.hpp"
+#endif
+
 #include <tuple>
 #include <array>
 #include <memory>

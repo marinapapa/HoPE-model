@@ -1,13 +1,11 @@
-#include AGENTS_CONFIG
 #include <atomic>
-#include <ppl.h>
 #include <hrtree/sorting/radix_sort.hpp>
 #include <rndutils.hpp>
+#include "tbb/tbb.h"
+#include "model.hpp"
+#include "agents/agents.hpp"
 #include "simulation.hpp"
 #include "observer.hpp"
-
-
-namespace ppl = Concurrency;
 
 
 namespace model {
@@ -173,10 +171,12 @@ namespace model {
       auto& pops = std::get<S>(pop);
       auto& uts = std::get<S>(sa).update_times;
       const auto T = sim->tick();
-      ppl::parallel_for(0ull, pops.size(), [&, sim, T](size_t i) {
-        if (uts[i] <= T) {
-          update_neighbor_info<S>::apply(sim, i, sa);
-          uts[i] = pops[i].update(i, T, *sim);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, pops.size()), [&, sim, T](const auto& r) {
+        for (auto i = r.begin(); i < r.end(); ++i) {
+          if (uts[i] <= T) {
+            update_neighbor_info<S>::apply(sim, i, sa);
+            uts[i] = pops[i].update(i, T, *sim);
+          }
         }
       });
       update_species<S + 1>(sim, pop, sa);
@@ -193,9 +193,11 @@ namespace model {
       auto& pops = std::get<S>(pop);
       auto& uts = std::get<S>(sa).update_times;
       const auto T = sim->tick();
-      ppl::parallel_for(0ull, pops.size(), [&, sim, T](size_t i) {
-        if (uts[i] != static_cast<tick_t>(-1)) {
-          pops[i].integrate(T, *sim);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, pops.size()), [&, sim, T](const auto& r) {
+        for (auto i = r.begin(); i < r.end(); ++i) {
+          if (uts[i] != static_cast<tick_t>(-1)) {
+            pops[i].integrate(T, *sim);
+          }
         }
       });
       integrate_species<S + 1>(sim, pop, sa);
@@ -215,10 +217,12 @@ namespace model {
       auto& fts = std::get<S>(sa).flock_tracker;
       fts.prepare(pops.size());
       const auto T = sim->tick();
-      ppl::parallel_for(0ull, pops.size(), [&, sim, T](size_t i) {
-        if (uts[i] != static_cast<tick_t>(-1)) {
-          pops[i].integrate(T, *sim);
-          fts.feed(pops[i], i);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, pops.size()), [&, sim, T](const auto& r) {
+        for (auto i = r.begin(); i < r.end(); ++i) {
+          if (uts[i] != static_cast<tick_t>(-1)) {
+            pops[i].integrate(T, *sim);
+            fts.feed(pops[i], i);
+          }
         }
       });
       integrate_species_flock<S + 1>(sim, pop, sa, fdd);

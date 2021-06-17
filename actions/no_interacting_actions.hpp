@@ -1,7 +1,7 @@
 #ifndef OTHER_ACTIONS_HPP_INCLUDED
 #define OTHER_ACTIONS_HPP_INCLUDED
 
-#include "action_base.hpp"
+#include "model/action_base.hpp"
 
 namespace model {
   namespace actions {

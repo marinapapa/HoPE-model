@@ -1,8 +1,8 @@
 #ifndef HUNT_ACTIONS_HPP_INCLUDED
 #define HUNT_ACTIONS_HPP_INCLUDED
 
-#include "action_base.hpp"
-#include "pigeon.hpp"
+#include "model/action_base.hpp"
+#include "agents/pigeon.hpp"
 
 namespace model {
 	namespace actions {
