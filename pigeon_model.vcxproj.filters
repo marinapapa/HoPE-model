@@ -214,7 +214,4 @@
   <ItemGroup>
     <Manifest Include="pigeon_model.manifest" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\debug_run.bat" />
-  </ItemGroup>
 </Project>
