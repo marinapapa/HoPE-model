@@ -21,7 +21,7 @@
 #if defined(_OPENMP) && !defined(HRTREE_NO_OPENMP)
   #include <omp.h>
   #ifndef HRTREE_OMP_MAX_THREADS
-    #define HRTREE_OMP_MAX_THREADS 8
+    #define HRTREE_OMP_MAX_THREADS 32
   #endif
   inline int hrtree_max_num_threads() { return std::min<int>(omp_get_max_threads(), HRTREE_OMP_MAX_THREADS); }
 #else
@@ -34,7 +34,7 @@
 #define HRTREE_PARALLEL_PARTITION_BLOCK 256
 
 #ifndef HRTREE_PARALLEL_ALIGNED_CONSTRUCT
-  //  #define HRTREE_PARALLEL_ALIGNED_CONSTRUCT
+// #define HRTREE_PARALLEL_ALIGNED_CONSTRUCT
 #endif
 
 #ifndef HRTREE_NO_VECTORIZER
@@ -46,24 +46,20 @@
 #endif
 
 
-#ifndef HRTREE_HAS_AVX
-  #if !defined(HRTREE_NO_VECTORIZER) && ((defined(_M_IX86_FP) && (_M_IX86_FP >= 3)) && defined(_M_X64))
-    #define HRTREE_HAS_AVX
-  #elif !defined(HRTREE_NO_VECTORIZER) && defined(__AVX__)  
-    #define HRTREE_HAS_AVX
-  #endif
+#if !defined(HRTREE_NO_VECTORIZER) && defined(__SSE2__)
+#define HRTREE_HAS_SSE2
 #endif
 
+#if !defined(HRTREE_NO_VECTORIZER) && defined(__SSE3__)
+#define HRTREE_HAS_SSE3
+#endif
 
-#if !defined(HRTREE_HAS_AVX)
-  #if !defined(HRTREE_NO_VECTORIZER) && ((defined(_M_IX86_FP) && (_M_IX86_FP >= 2)) || defined(_M_X64))
-    #define HRTREE_HAS_SSE2
-    #if defined(_M_X64)
-      #define HRTREE_HAS_SSE3
-    #endif
-  #elif !defined(HRTREE_NO_VECTORIZER) && defined(__SSE2__)  
-    #define HRTREE_HAS_SSE2
-  #endif
+#if !defined(HRTREE_NO_VECTORIZER) && defined(__AVX__)
+#define HRTREE_HAS_AVX
+#endif
+
+#if !defined(HRTREE_NO_VECTORIZER) && defined(__AVX2__)
+#define HRTREE_HAS_AVX2
 #endif
 
 
@@ -89,9 +85,5 @@
   #define HRTREE_MALLOC_ALIGN 8
 #endif
 
-
-#ifndef HRTREE_MAX_VARIADIC_ARGS
-#define HRTREE_MAX_VARIADIC_ARGS 10
-#endif
 
 #endif

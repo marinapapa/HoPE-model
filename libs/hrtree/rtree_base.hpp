@@ -32,8 +32,8 @@ namespace hrtree {
   class rtree_base
   {
   protected:
-    typedef typename aligned_iterator< BV, memory::allocator_has_align< A >::value > aligned_iter;
-    typedef typename aligned_iterator< const BV, memory::allocator_has_align< A >::value > const_aligned_iter;
+    typedef aligned_iterator< BV, memory::allocator_has_align< A >::value > aligned_iter;
+    typedef aligned_iterator< const BV, memory::allocator_has_align< A >::value > const_aligned_iter;
 
   public:
     static const size_t MaxHeight = 16;
@@ -80,6 +80,10 @@ namespace hrtree {
     bv_iterator level_begin(size_t level) { return index_[level]; }
     bv_iterator level_end(size_t level) { return index_[level + 1]; }
 
+    void build_index(size_t n);
+    void build_hierarchy();
+    void parallel_build_hierarchy();
+
   protected:
     typedef std::pair< size_t, size_t > stack_element;
 
@@ -88,10 +92,6 @@ namespace hrtree {
       template <typename T>
       const T& operator()(const T& x) const { return x; }
     };
-
-    void build_index(size_t n);
-    void build_hierarchy();
-    void parallel_build_hierarchy();
 
     bv_iterator  index_[MaxHeight + 1];
     size_t    height_, capacity_;

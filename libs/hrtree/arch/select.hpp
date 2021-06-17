@@ -14,6 +14,7 @@
 #ifdef HRTREE_HAS_AVX
   #include <immintrin.h>
 #elif defined(HRTREE_HAS_SSE2)
+  #include <xmmintrin.h>
   #include <emmintrin.h>
 #endif
 

@@ -5,7 +5,9 @@
 #include <tbb/tbb.h>
 #include <json/json.hpp>
 #include "model/model.hpp"
-#include "simgl/AppWin.h"
+#ifdef WIN32
+# include "simgl/AppWin.h"
+#endif
 #include "analysis/analysis_obs.hpp"
 #include <libs/cmd_line.h>
 
@@ -61,6 +63,9 @@ void run(json& J, bool headless)
       break;
     }
     else {
+#ifndef WIN32
+      throw std::runtime_error("Gui mode not supported on this platform. Use --headless");
+#else
       auto appWin = std::make_unique<AppWin>();
       std::for_each(observers.begin(), observers.end(), [&appWin](const std::unique_ptr<Observer>& obs) {
         appWin->append_observer(obs.get());
@@ -73,6 +78,7 @@ void run(json& J, bool headless)
       if (retval == 0) break;
       else if (retval == 1) ss = sim->get_snapshots();    // restart with current snapshot
       else if (retval == 2) ss = initial_snapshot;        // restart from scratch
+#endif
     }
   }
 }

@@ -10,6 +10,7 @@
 #define HRTREE_RTREE_HPP
 
 #include <hrtree/rtree_base.hpp>
+#include <hrtree/mbr_build_policy.hpp>
 
 
 namespace hrtree {
@@ -19,7 +20,7 @@ namespace hrtree {
     typename BV,
     typename BP = mbr_build_policy<BV>,
     size_t FANOUT = 8,
-    typename A = typename aligned_allocator< BV, HRTREE_ALIGNOF(BV) >
+    typename A = aligned_allocator< BV, HRTREE_ALIGNOF(BV) >
   >
   class rtree : public rtree_base<BV, BP, FANOUT, A>
   {
@@ -45,7 +46,7 @@ namespace hrtree {
 
     rtree(rtree&& rhs) : base_type(std::move(rhs)) {}
     rtree& operator = (rtree&& rhs) { base_type:operator=(std::move(rhs)); return *this; }
-    void swap(rtree&& other) { base_type::swap(std::forward(x)); }
+    void swap(rtree&& other) { base_type::swap(std::forward(other)); }
 
     template <typename FwIt, typename Conversion>
     void build(FwIt first, FwIt last, Conversion conv);
@@ -74,7 +75,6 @@ namespace hrtree {
     template <typename FwdIt, typename CullPolicy, typename QueryFun>
     void query(FwdIt cfirst, const CullPolicy& cull_policy, QueryFun& query_fun) const;
 
-
     template <typename CullPolicy, typename QueryFun>
     void query(const CullPolicy& cull_policy, QueryFun& query_fun) const;
   };
@@ -90,7 +90,7 @@ namespace hrtree {
     base_type::build_index(std::distance(first, last));
 
     // Construct leaf bounding volumes
-    const int N = (int)leaf_nodes();
+    const int N = static_cast<int>(this->leaf_nodes());
 #   pragma omp parallel firstprivate(first, conv)
     {
       try
@@ -100,7 +100,7 @@ namespace hrtree {
         {
           FwdIt src(first);
           std::advance(src, i);
-          alloc_.construct(&*(index_[0] + i), conv(*src));
+          this->alloc_.construct(&*(this->index_[0] + i), conv(*src));
         }
       }
       catch (...)
@@ -121,11 +121,11 @@ namespace hrtree {
     base_type::build_index(std::distance(first, last));
 
     // Construct leaf bounding volumes
-    const int N = (int)leaf_nodes();
-    bv_iterator dst(index_[0]);
+    const int N = (int)this->leaf_nodes();
+    typename base_type::bv_iterator dst(this->index_[0]);
     for (int i=0; i<N; ++i)
     {
-      alloc_.construct(&*dst, conv(*first));
+      this->alloc_.construct(&*dst, conv(*first));
       ++dst;
       ++first;
     }
@@ -137,11 +137,11 @@ namespace hrtree {
   template <typename FwdIt, typename Constructor>
   void rtree<BV,BP,FANOUT,A>::construct(FwdIt first, FwdIt last, Constructor ctor)
   {
-    base_type::build_index(std::distance(first, last));
+    typename base_type::build_index(std::distance(first, last));
 
     // Construct leaf bounding volumes
-    const int N = (int)leaf_nodes();
-    bv_iterator dst(index_[0]);
+    const int N = (int)this->leaf_nodes();
+    typename base_type::bv_iterator dst(this->index_[0]);
     for (int i=0; i<N; ++i)
     {
       ctor(&*dst, *first);
@@ -162,7 +162,7 @@ namespace hrtree {
     base_type::build_index(std::distance(first, last));
 
     // Construct leaf bounding volumes
-    const int N = (int)leaf_nodes();
+    const int N = (int)this->leaf_nodes();
 #   pragma omp parallel firstprivate(first, ctor)
     {
       try
@@ -172,7 +172,7 @@ namespace hrtree {
         {
           FwdIt src(first);
           std::advance(src, i);
-          ctor(&*(index_[0] + i), *src);
+          ctor(&*(this->index_[0] + i), *src);
         }
       }
       catch (...)
@@ -194,15 +194,15 @@ namespace hrtree {
     QueryFun& query_fun
     ) const
   {
-    if (empty()) return;
+    if (this->empty()) return;
     size_t level = base_type::height_ - 1;
-    stack_element stack[base_type::MaxHeight];
+    typename base_type::stack_element stack[base_type::MaxHeight];
     stack[level] = base_type::stack_element(0,1);
     while (level < base_type::height_)
     {
-      base_type::stack_element& s = stack[level];
-      const_bv_iterator first( index_[level] + s.first );
-      s.second = std::min(s.second, level_nodes(level));
+      typename base_type::stack_element& s = stack[level];
+      typename base_type::const_bv_iterator first( this->index_[level] + s.first );
+      s.second = std::min(s.second, this->level_nodes(level));
       for (; s.first < s.second; ++s.first)
       {
         if (cull_policy(*first++))
@@ -222,8 +222,8 @@ namespace hrtree {
           }
           FwdIt it(cfirst);
           std::advance(it, next_level_first);
-          const_bv_iterator first_leaf(index_[0] + next_level_first);
-          const_bv_iterator last_leaf = std::min(index_[0] + s.first * FANOUT, index_[1]);
+          typename base_type::const_bv_iterator first_leaf(this->index_[0] + next_level_first);
+          typename base_type::const_bv_iterator last_leaf = std::min(this->index_[0] + s.first * FANOUT, this->index_[1]);
           for (; first_leaf != last_leaf; ++first_leaf, ++it)
           {
             if (cull_policy(*first_leaf))
@@ -247,15 +247,15 @@ descent:
     QueryFun& query_fun
     ) const
   {
-    if (empty()) return;
+    if (this->empty()) return;
     size_t level = base_type::height_ - 1;
-    stack_element stack[base_type::MaxHeight];
-    stack[level] = base_type::stack_element(0, 1);
+    typename base_type::stack_element stack[base_type::MaxHeight];
+    stack[level] = typename base_type::stack_element(0, 1);
     while (level < base_type::height_)
     {
-      base_type::stack_element& s = stack[level];
-      const_bv_iterator first(index_[level] + s.first);
-      s.second = std::min(s.second, level_nodes(level));
+      typename base_type::stack_element& s = stack[level];
+      typename base_type::const_bv_iterator first(this->index_[level] + s.first);
+      s.second = std::min(s.second, this->level_nodes(level));
       for (; s.first < s.second; ++s.first)
       {
         if (cull_policy(*first++))
@@ -270,12 +270,12 @@ descent:
           }
           if (level > 1)
           {
-            stack[--level] = base_type::stack_element(next_level_first, s.first * FANOUT);
+            stack[--level] = typename base_type::stack_element(next_level_first, s.first * FANOUT);
             goto descent;
           }
           size_t leaf_idx = next_level_first;
-          const_bv_iterator first_leaf(index_[0] + next_level_first);
-          const_bv_iterator last_leaf = std::min(index_[0] + s.first * FANOUT, index_[1]);
+          typename base_type::const_bv_iterator first_leaf(this->index_[0] + next_level_first);
+          typename base_type::const_bv_iterator last_leaf = std::min(this->index_[0] + s.first * FANOUT, this->index_[1]);
           for (; first_leaf != last_leaf; ++first_leaf, ++leaf_idx)
           {
             if (cull_policy(*first_leaf))

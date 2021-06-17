@@ -42,7 +42,7 @@ namespace hrtree {
         const scalar scale(Key::max_arg);
         for (int d=0; d < Key::dim; ++d)
         {
-          norm[d] = static_cast<typename Key::arg_type>(*(pa::get_ptr(p) + d) * scale);
+          norm[d] = static_cast<typename Key::arg_type>(*(pa::ptr(p) + d) * scale);
         }
         return Key(norm);
       }

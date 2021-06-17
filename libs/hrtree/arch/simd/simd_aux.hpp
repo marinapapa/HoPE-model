@@ -102,7 +102,7 @@ namespace hrtree { namespace simd {
   inline __m128 div(__m128 a, __m128 b)   { return _mm_div_ps(a, b); }
   inline __m128 min(__m128 a, __m128 b)   { return _mm_min_ps(a, b); }
   inline __m128 max(__m128 a, __m128 b)   { return _mm_max_ps(a, b); }
-  inline __m128 and(__m128 a, __m128 b)   { return _mm_and_ps(a, b); }
+  inline __m128 band(__m128 a, __m128 b)   { return _mm_and_ps(a, b); }
   inline __m128 cmpge(__m128 a, __m128 b) { return _mm_cmpge_ps(a, b); }
   inline __m128 cmple(__m128 a, __m128 b) { return _mm_cmple_ps(a, b); }
   inline __m128i cvtt_epi32(__m128 a)     { return _mm_cvttps_epi32(a); }
@@ -114,7 +114,7 @@ namespace hrtree { namespace simd {
   inline __m128d div(__m128d a, __m128d b)   { return _mm_div_pd(a, b); }
   inline __m128d min(__m128d a, __m128d b)   { return _mm_min_pd(a, b); }
   inline __m128d max(__m128d a, __m128d b)   { return _mm_max_pd(a, b); }
-  inline __m128d and(__m128d a, __m128d b)   { return _mm_and_pd(a, b); }
+  inline __m128d band(__m128d a, __m128d b)   { return _mm_and_pd(a, b); }
   inline __m128d cmpge(__m128d a, __m128d b) { return _mm_cmpge_pd(a, b); }
   inline __m128d cmple(__m128d a, __m128d b) { return _mm_cmple_pd(a, b); }
   inline __m128i cvtt_epi32(__m128d a)       { return _mm_cvttpd_epi32(a); }
@@ -128,7 +128,7 @@ namespace hrtree { namespace simd {
   inline __m256d div(__m256d a, __m256d b)   { return _mm256_div_pd(a, b); }
   inline __m256d min(__m256d a, __m256d b)   { return _mm256_min_pd(a, b); }
   inline __m256d max(__m256d a, __m256d b)   { return _mm256_max_pd(a, b); }
-  inline __m256d and(__m256d a, __m256d b)   { return _mm256_and_pd(a, b); }
+  inline __m256d band(__m256d a, __m256d b)   { return _mm256_and_pd(a, b); }
   inline __m256d cmpge(__m256d a, __m256d b) { return _mm256_cmp_pd(a, b, _CMP_GE_OQ); }
   inline __m256d cmple(__m256d a, __m256d b) { return _mm256_cmp_pd(a, b, _CMP_LE_OQ); }
   inline __m128i cvtt_epi32(__m256d a)       { return _mm256_cvttpd_epi32(a); }

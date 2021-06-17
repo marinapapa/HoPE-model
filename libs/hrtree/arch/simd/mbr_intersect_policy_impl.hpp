@@ -35,7 +35,7 @@ namespace hrtree { namespace detail {
     {
       simd_vec cmp0 = simd::cmpge(hi_, lo);
       simd_vec cmp1 = simd::cmple(lo_, hi);
-      return 0xF == simd::movemask(simd::and(cmp0, cmp1));
+      return 0xF == simd::movemask(simd::band(cmp0, cmp1));
     }
 
     bool apply(const Mbr& rhs) const

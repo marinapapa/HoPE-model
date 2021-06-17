@@ -77,6 +77,7 @@ namespace hrtree { namespace sorting { namespace detail {
           }
           std::swap(src, buf);
 #         pragma omp barrier 
+          ;
         }
       }
     }

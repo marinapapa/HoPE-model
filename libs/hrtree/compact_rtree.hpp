@@ -10,6 +10,7 @@
 #define HRTREE_COMPACT_RTREE_HPP
 
 #include <hrtree/rtree_base.hpp>
+#include <hrtree/mbr_build_policy.hpp>
 
 
 namespace hrtree {
@@ -83,15 +84,15 @@ namespace hrtree {
     base_type::build_index((elems_ - 1 + FANOUT) / FANOUT);
 
     // Construct leaf bounding volumes
-    const int L = (int)leaf_nodes();
+    const int L = (int)this->leaf_nodes();
     const int N = (int)elems_;
     build_policy bp;
     const int numt = hrtree_max_num_threads();
 #   pragma omp parallel for num_threads(numt)
     for (int i=0; i<L; ++i)
     {
-      auto dst = index_[0] + i;
-      alloc_.construct(&*dst, conv(*(first + i * FANOUT)));
+      auto dst = this->index_[0] + i;
+      this->alloc_.construct(&*dst, conv(*(first + i * FANOUT)));
       const size_t F = std::min<size_t>(FANOUT, N - i * FANOUT);
       for (size_t j=1; j<F; ++j)
       {
@@ -112,12 +113,12 @@ namespace hrtree {
     base_type::build_index((elems_ - 1 + FANOUT) / FANOUT);
 
     // Construct leaf bounding volumes
-    const size_t L = leaf_nodes();
-    bv_iterator dst(index_[0]);      
+    const size_t L = this->leaf_nodes();
+    bv_iterator dst(this->index_[0]);      
     build_policy bp;
     for (size_t i=0; i<L; ++i)
     {
-      alloc_.construct(&*dst, conv(*first++));
+      this->alloc_.construct(&*dst, conv(*first++));
       const size_t F = std::min<size_t>(FANOUT, elems_ - i * FANOUT);
       for (size_t j=1; j<F; ++j)
       {
@@ -138,7 +139,7 @@ namespace hrtree {
     QueryFun& query_fun
     ) const
   {
-    if (empty()) return;
+    if (this->empty()) return;
     size_t level = base_type::height_ - 1;
     stack_element stack[base_type::MaxHeight];
     stack[level] = base_type::stack_element(0,1);
@@ -188,15 +189,15 @@ descent:
     QueryFun& query_fun
     ) const
   {
-    if (empty()) return;
+    if (this->empty()) return;
     size_t level = base_type::height_ - 1;
     stack_element stack[base_type::MaxHeight];
     stack[level] = base_type::stack_element(0, 1);
     while (level < base_type::height_)
     {
       base_type::stack_element& s = stack[level];
-      const_bv_iterator first(index_[level] + s.first);
-      s.second = std::min(s.second, level_nodes(level));
+      const_bv_iterator first(this->index_[level] + s.first);
+      s.second = std::min(s.second, this->level_nodes(level));
       for (; s.first < s.second; ++s.first)
       {
         if (cull_policy(*first++))

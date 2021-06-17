@@ -110,8 +110,8 @@ skip:
         std::uint8_t key = *(conv(*(src0 + i)) + byte);
         ++bins[key];
       }
-      int j = 0;
       int cumsum = 0;
+      int j = 0;
       for (int b=0; b<=UINT8_MAX; ++b) 
       {
         int count = bins[b];

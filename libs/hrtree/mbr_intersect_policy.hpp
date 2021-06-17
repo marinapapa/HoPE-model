@@ -9,6 +9,7 @@
 #ifndef HRTREE_MBR_INTERSECT_POLICY_HPP_INCLUDED
 #define HRTREE_MBR_INTERSECT_POLICY_HPP_INCLUDED
 
+#include <cassert>
 #include <hrtree/adapt_mbr.hpp>
 #include <hrtree/arch/select.hpp>
 
@@ -41,7 +42,7 @@ namespace hrtree {
 
       bool apply(unsupported, unsupported) const
       {
-        static_assert( !"unsupported simd_type");
+        assert( !"unsupported simd_type");
         return true;
       }
 

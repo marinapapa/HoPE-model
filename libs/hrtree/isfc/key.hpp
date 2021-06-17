@@ -10,6 +10,7 @@
 #ifndef HRTREE_ISFC_KEY_HPP_INCLUDED
 #define HRTREE_ISFC_KEY_HPP_INCLUDED
 
+#include <limits.h>
 #include <limits>
 #include <cstdint>
 #include <type_traits>

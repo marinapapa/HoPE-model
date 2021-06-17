@@ -12,6 +12,22 @@
 #include <type_traits>
 #include <hrtree/config.hpp>
 
+namespace hrtree {
+
+  namespace traits {
+
+    template <typename Point>
+    struct point_dim;
+
+    template <typename Point>
+    struct point_scalar;
+
+    template <typename Point>
+    struct point_access;
+
+  }
+
+}
 
 #define HRTREE_ADAPT_POINT(Point, Scalar, Dim, Access) \
 namespace hrtree { namespace traits { \
@@ -36,22 +52,5 @@ namespace hrtree { namespace traits { \
 #define HRTREE_ADAPT_POINT_META(Point, Scalar, Dim, Meta) \
   HRTREE_ADAPT_POINT(Point, Scalar, Dim, Meta::template apply(p))
 
-
-namespace hrtree { 
-
-  namespace traits {
-
-    template <typename Point>
-    struct point_dim;
-
-    template <typename Point>
-    struct point_scalar;
-
-    template <typename Point>
-    struct point_access;
-
-  } 
-
-}
 
 #endif

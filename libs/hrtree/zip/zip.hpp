@@ -185,10 +185,10 @@ namespace hrtree {
       struct iter_move0 
       {
         template <typename ZIT>
-        static void apply(ZIT& src, ZIT & dst, ptrdiff_t srcIdx, ptrdiff_t dstIdx)
+        static void apply(ZIT& src, ZIT& dst, ptrdiff_t srcIdx, ptrdiff_t dstIdx)
         {
           iter_move0<I-1>::template apply(src, dst, srcIdx, dstIdx);
-          *(dst.get<I>() + dstIdx) = std::move(*(src.get<I>() + srcIdx));
+          *(dst.template get<I>() + dstIdx) = std::move(*(src.template get<I>() + srcIdx));
         }
       };
 
