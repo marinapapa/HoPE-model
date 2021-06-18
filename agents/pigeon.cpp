@@ -1,6 +1,6 @@
-#include "pigeon.hpp"
+//#include "agents/agents_fwd.hpp"
 #include "model/init_cond.hpp"
-
+#include "agents/agents.hpp"
 
 namespace model {
 
@@ -22,7 +22,7 @@ namespace model {
     if (type == "none") return {};
     std::vector<snapshot_entry<pigeon_tag>> vse(N);
     if (type == "random") do_init_pop(vse, initial_conditions::random_pos_dir(jic));
-	else if (type == "flock") do_init_pop(vse, initial_conditions::in_flock(jic));
+	  else if (type == "flock") do_init_pop(vse, initial_conditions::in_flock(jic));
     else throw std::runtime_error("unknown initializer");
     return vse;
   }

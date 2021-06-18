@@ -1,7 +1,7 @@
 #ifndef AVOID_ACTIONS_HPP_INCLUDED
 #define AVOID_ACTIONS_HPP_INCLUDED
 
-#include "action_base.hpp"
+#include "model/action_base.hpp"
 #include <glmutils/ray.hpp>
 #include <glmutils/random.hpp>
 #include "model/while_topo.hpp"
@@ -23,7 +23,7 @@ namespace model {
         topo = J["topo"]; // [1]
 
         auto fov = J["fov"]; // [deg]
-        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - fov))); // [1]
+        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - float(fov)))); // [1]
 
         float minsep = J["minsep"];       // [m]
         minsep2 = minsep * minsep;        // [m^2]

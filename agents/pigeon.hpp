@@ -57,7 +57,7 @@ namespace model {
     using AP = states::package<
       states::transient<actions::package<Pigeon, // normal flocking
         actions::align_n<Pigeon>,
-		actions::cohere_turn_n_all<Pigeon>,
+		    actions::cohere_turn_n_all<Pigeon>,
         actions::cohere_accel_n_front<Pigeon>,
         actions::avoid_n_position<Pigeon>,
         actions::wiggle<Pigeon>,

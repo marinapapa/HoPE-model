@@ -60,15 +60,11 @@
   #if __has_builtin(__builtin_popcount)
     #define RNDUTILS_POP_COUNT(x) __builtin_popcount(x)
   #endif
-  #if __has_builtin(__builtin_popcountl)
-    #define RNDUTILS_POP_COUNT64(x) __builtin_popcountl(x)
-  #endif
 #elif defined(_M_X64) || defined(_M_IX86) || defined(__i386__) || defined(__amd64__)
   #if defined(__GNUC__)
     #include <x86intrin.h>
     #define RNDUTILS_MSB_U32(x) (x ? 32 - __builtin_clz(x) : 0)
-    #define RNDUTILS_POP_COUNT(x) __builtin_popcount(x)
-    #define RNDUTILS_POP_COUNT64(x) __builtin_popcountl(x)
+    #define RNDUTILS_POP_COUNT(x) __buildin_popcount(x)
     #if defined(__amd64__)
       #define RNDUTILS_MSB_U64(x) (x ? 64 - __builtin_clzll(x) : 0)
     #endif
@@ -76,7 +72,6 @@
     #include <intrin.h>
     #define RNDUTILS_MSB_U32(x) static_cast<int>(x ? 32u - _lzcnt_u32(x) : 0u)
     #define RNDUTILS_POP_COUNT(x) __popcnt(x)
-    #define RNDUTILS_POP_COUNT64(x) __popcnt64(x)
     #if defined(_M_X64)
       #define RNDUTILS_MSB_U64(x) static_cast<int>(x ? 64ull - _lzcnt_u64(x) : 0ull)
     #endif
@@ -99,9 +94,6 @@
 #endif
 #if !defined(RNDUTILS_POP_COUNT)
   #define RNDUTILS_POP_COUNT(x) popcount(x)
-#endif
-#if !defined(RNDUTILS_POP_COUNT64)
-  #define RNDUTILS_POP_COUNT64(x) (popcount(x & 0x00000000FFFFFFFF) + popcount(x >> 31))
 #endif
 // clang format on
 
@@ -135,7 +127,7 @@ namespace detail {
 
   inline constexpr int popcount(uint32_t x) noexcept
   {
-    // bit count, Hacker's delight
+    // bit count, Hacker'p delight
     x = x - ((x >> 1) & 0x55555555);
     x = (x & 0x33333333) + ((x >> 2) & 0x33333333);
     x = (x + (x >> 4)) & 0x0F0F0F0F;
@@ -145,12 +137,6 @@ namespace detail {
   }
 
 
-  inline int popcount(uint64_t x) noexcept
-  {
-    return static_cast<int>(RNDUTILS_POP_COUNT64(x));
-  }
-    
-    
   inline int msb_uint(uint8_t x) noexcept
   {
     return RNDUTILS_MSB_U32(uint32_t{ x });
@@ -268,7 +254,7 @@ namespace detail {
   // returns canonical random number in [0,1)
   // fast version for URNG returning unsigned result.
   template <typename Real, size_t Bits, typename URNG>
-  inline auto generate_canonical(URNG& reng) noexcept
+  inline auto generate_canonical(URNG& reng)
     -> enable_if_t<std::is_unsigned<typename URNG::result_type>::value, Real>
   {
     using GCB = generate_canonical_constants<Real, Bits, URNG>;
@@ -303,8 +289,8 @@ namespace detail {
     // different between platforms: typeid
     const auto e5 = static_cast<uint64_t>(typeid(make_high_entropy_seed_array).hash_code());
     // likely different between runs, invocations and platforms: address of local
-    const auto e6 = reinterpret_cast<uint64_t>(&e0);
-	return {{ e0, e1, e2, e3, e4, e5, e6 }};
+    auto e6 = static_cast<uint64_t>(std::ptrdiff_t(std::addressof(e0) - 0));
+	  return {{ e0, e1, e2, e3, e4, e5, e6 }};
   }
 
 
@@ -312,16 +298,12 @@ namespace detail {
   // based on std::chrono::high_resolution_clock.
   inline auto make_low_entropy_seed_array() noexcept -> std::array<uint64_t, 8>
   {
-	  // the classic: time, advertised with nano-second resolution.
-	  const auto e1 = static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count());
-	  // different between invocations from different threads within one app: thread-id
-	  const auto tid = std::this_thread::get_id();
-	  const uint64_t e2{ std::hash<std::remove_const_t<decltype(tid)>>()(tid) };
-	  return std::array<uint64_t, 8>{{
-        e1, e2,
-        0x000000003c10b019, 0x2bf820b4dd7c1a8a,
-        0x9901cf90a40883da, 0x5a3686b2e1de6e51,
-        0x000000cc0494d228, 0x000000cc04b66740
+    return std::array<uint64_t, 8>{{
+      0x000021ac9bcc0a2e ^ static_cast<uint64_t>(static_cast<uint64_t>(std::chrono::high_resolution_clock::now().time_since_epoch().count())),
+      0x000041f2ea94a095,
+      0x000000003c10b019, 0x2bf820b4dd7c1a8a,
+      0x9901cf90a40883da, 0x5a3686b2e1de6e51,
+      0x000000cc0494d228, 0x000000cc04b66740
     }};
   }
 }
@@ -353,12 +335,14 @@ public:
     return s * rx;
   }
 
-  explicit xorshift128(uint64_t val = default_seed) noexcept
+  explicit xorshift128(uint64_t val = default_seed) noexcept :
+    state_()
   {
     seed(val);
   }
 
-  explicit xorshift128(std::seed_seq& sseq) noexcept
+  explicit xorshift128(std::seed_seq& sseq) noexcept :
+    state_()
   {
     seed(sseq);
   }
@@ -371,8 +355,10 @@ public:
 
   void seed(std::seed_seq& sseq) noexcept
   {
-    auto* p = reinterpret_cast<uint32_t*>(state_.data());
-    sseq.generate(p, p + 2 * state_.size());
+    // strict aliasing rules enforce cumbersome code:
+    uint32_t p[2 * state_words_];
+    sseq.generate(p, p + 2 * state_words_);
+    std::memcpy(state_.data(), p, state_bytes_);
   }
 
   uint64_t operator()(void) noexcept
@@ -392,31 +378,33 @@ public:
     for (unsigned long long i = 0; i < z; ++i) this->operator()();
   }
 
-  friend bool operator==(engine_type const& lhs, engine_type const& rhs) noexcept
+  friend bool operator==(const engine_type& lhs, const engine_type& rhs) noexcept
   {
     return lhs.state_[0] == rhs.state_[0] && lhs.state_[1] == rhs.state_[1];
   }
 
-  friend bool operator!=(engine_type const& lhs, engine_type const& rhs) noexcept
+  friend bool operator!=(const engine_type& lhs, const engine_type& rhs) noexcept
   {
     return !(lhs == rhs);
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, engine_type const& reng) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const engine_type& reng) -> std::basic_ostream<CharT, Traits>&
   {
     for (auto x : reng.state_) os << x << ' ';
     return os;
   }
 
   template <class CharT, class Traits>
-  friend auto operator>>(std::basic_istream<CharT, Traits>& is, engine_type const& reng) -> std::basic_istream<CharT, Traits>&
+  friend auto operator>>(std::basic_istream<CharT, Traits>& is, const engine_type& reng) -> std::basic_istream<CharT, Traits>&
   {
     for (auto& x : reng.state_) is >> x >> std::ws;
     return is;
   }
 
 private:
+  static constexpr size_t state_words_ = 2;
+  static constexpr size_t state_bytes_ = state_words_ * sizeof(uint64_t);
   std::array<uint64_t, 2> state_;
 };
 
@@ -432,12 +420,14 @@ public:
   static constexpr uint64_t(min)() { return static_cast<uint64_t>(0); };
   static constexpr uint64_t(max)() { return static_cast<uint64_t>(-1); };
 
-  explicit xorshift1024(uint64_t val = default_seed) noexcept
+  explicit xorshift1024(uint64_t val = default_seed) noexcept :
+    state_(), pivot_(0)
   {
     seed(val);
   }
 
-  explicit xorshift1024(std::seed_seq& sseq) noexcept
+  explicit xorshift1024(std::seed_seq& sseq) noexcept :
+    state_(), pivot_(0)
   {
     seed(sseq);
   }
@@ -450,8 +440,10 @@ public:
 
   void seed(std::seed_seq& sseq) noexcept
   {
-    auto* p = reinterpret_cast<uint32_t*>(state_.data());
-    sseq.generate(p, p + 2 * state_.size());
+    // strict aliasing rules enforce cumbersome code:
+    uint32_t p[2 * state_words_];
+    sseq.generate(p, p + 2 * state_words_);
+    std::memcpy(state_.data(), p, state_bytes_);
     pivot_ = 0;
   }
 
@@ -470,32 +462,34 @@ public:
     for (unsigned long long i = 0; i < z; ++i) this->operator()();
   }
 
-  friend bool operator==(engine_type const& lhs, engine_type const& rhs) noexcept
+  friend bool operator==(const engine_type& lhs, const engine_type& rhs) noexcept
   {
     return lhs.state_ == rhs.state_;
   }
 
-  friend bool operator!=(engine_type const& lhs, engine_type const& rhs) noexcept
+  friend bool operator!=(const engine_type& lhs, const engine_type& rhs) noexcept
   {
     return !(lhs == rhs);
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, engine_type const& reng) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const engine_type& reng) -> std::basic_ostream<CharT, Traits>&
   {
     for (auto x : reng.state_) os << x << ' ';
     return os;
   }
 
   template <class CharT, class Traits>
-  friend auto operator>>(std::basic_istream<CharT, Traits>& is, engine_type const& reng) -> std::basic_istream<CharT, Traits>&
+  friend auto operator>>(std::basic_istream<CharT, Traits>& is, const engine_type& reng) -> std::basic_istream<CharT, Traits>&
   {
     for (auto& x : reng.state_) is >> std::ws >> x;
     return is;
   }
 
 private:
-  std::array<uint64_t, 16> state_;
+  static constexpr size_t state_words_ = 16;
+  static constexpr size_t state_bytes_ = state_words_ * sizeof(uint64_t);
+  std::array<uint64_t, state_words_> state_;
   int pivot_;
 };
 
@@ -586,20 +580,20 @@ public:
   T operator()(URNG&) const { return val_; }
 
   template <typename URNG>
-  T operator()(URNG&, param_type const& val) const { return val; }
+  T operator()(URNG&, const param_type& val) const { return val; }
 
-  friend bool operator==(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator==(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.val_ == rhs.val_;
   }
 
-  friend bool operator!=(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator!=(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.val_ != rhs.val_;
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const& dist) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type& dist) -> std::basic_ostream<CharT, Traits>&
   {
     os << dist.val_;
     return os;
@@ -650,22 +644,22 @@ public:
   }
 
   template <typename URNG>
-  Real operator()(URNG& reng, param_type const&) const
+  Real operator()(URNG& reng, const param_type&) const
   {
     return uniform01<Real>(reng);
   }
 
-  friend bool operator==(distribution_type const&, distribution_type const&)
+  friend bool operator==(const distribution_type&, const distribution_type&)
   {
     return true;
   }
-  friend bool operator!=(distribution_type const&, distribution_type const&)
+  friend bool operator!=(const distribution_type&, const distribution_type&)
   {
     return false;
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const&) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type&) -> std::basic_ostream<CharT, Traits>&
   {
     return os;
   }
@@ -722,7 +716,7 @@ public:
   }
 
   template <typename URNG>
-  IntT operator()(URNG& reng, param_type const& p) const
+  IntT operator()(URNG& reng, const param_type& p) const
   {
     static_assert(std::is_unsigned<typename URNG::result_type>::value, 
                   "invalid template argument for uniform_signed_distribution::operator()");
@@ -742,17 +736,17 @@ public:
 
   void reset() {}
 
-  friend bool operator==(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator==(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.p_ == rhs.p_;
   }
-  friend bool operator!=(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator!=(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.p_ != rhs.p_;
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const& dist) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type& dist) -> std::basic_ostream<CharT, Traits>&
   {
     os << dist.p_.range << ' ' << dist.p_.lo << ' ' << dist.p_.digits;
     return os;
@@ -769,7 +763,7 @@ public:
 
 private:
   template <typename URNG>
-  IntT eval(URNG& reng, param_type const& p, std::true_type) const
+  IntT eval(URNG& reng, const param_type& p, std::true_type) const
   { // sufficient digits in URNG
     const int shift = rndutils::detail::urng_range<URNG>::digits - p.digits;
     UIntT x;
@@ -781,7 +775,7 @@ private:
   }
 
   template <typename URNG>
-  IntT eval(URNG& reng, param_type const& p, std::false_type) const
+  IntT eval(URNG& reng, const param_type& p, std::false_type) const
   { // insufficient digits in URNG
     using urng_range = rndutils::detail::urng_range<URNG>;
     const auto mask = ~(static_cast<UIntT>(-1) << p.digits);
@@ -796,6 +790,128 @@ private:
       x &= mask;
     } while (x > p.range);
     return static_cast<IntT>(x) + p.lo;
+  }
+
+  param_type p_;
+};
+
+
+// Replacement for std::uniform_int_distribution<signed_type>(0,x).
+// uses the sign-one bit for faster evaluation.
+template <typename IntT = int>
+class uniform_sample_distribution
+{
+  using UIntT = typename std::make_unsigned<IntT>::type;
+
+public:
+  static_assert(std::is_signed<IntT>::value && std::is_integral<IntT>::value,
+    "invalid template argument for uniform_sample_distribution");
+
+  using result_type = IntT;
+  using distribution_type = uniform_sample_distribution<IntT>;
+
+  struct param_type
+  {
+    using distribution_type = uniform_sample_distribution<IntT>;
+    UIntT range;
+    int digits;
+  };
+
+  constexpr IntT(min)() const { return IntT(0); }
+  constexpr IntT(max)() const { return p_.range; }
+
+  uniform_sample_distribution(IntT Max)
+  {
+    using std::abs;
+    p_.range = static_cast<UIntT>(Max);
+    p_.digits = detail::msb_uint(UIntT(p_.range + 1));
+  }
+
+
+  template <typename URNG>
+  IntT operator()(URNG& reng) const
+  {
+    static_assert(std::is_unsigned<typename URNG::result_type>::value,
+      "invalid template argument for uniform_sample_distribution::operator()");
+    // dispatch by digits-requirement
+    return eval(reng, p_, std::integral_constant<bool, rndutils::detail::urng_range<URNG>::digits >= std::numeric_limits<IntT>::digits>());
+  }
+
+  template <typename URNG>
+  IntT operator()(URNG& reng, const param_type& p) const
+  {
+    static_assert(std::is_unsigned<typename URNG::result_type>::value,
+      "invalid template argument for uniform_sample_distribution::operator()");
+    // dispatch by digits-requirement
+    return eval(reng, p, std::integral_constant<bool, rndutils::detail::urng_range<URNG>::digits >= std::numeric_limits<IntT>::digits>());
+  }
+
+  param_type param() const
+  {
+    return p_;
+  }
+
+  void param(const param_type& Param)
+  {
+    p_ = Param;
+  }
+
+  void reset() {}
+
+  friend bool operator==(const distribution_type& lhs, const distribution_type& rhs)
+  {
+    return lhs.p_ == rhs.p_;
+  }
+  friend bool operator!=(const distribution_type& lhs, const distribution_type& rhs)
+  {
+    return lhs.p_ != rhs.p_;
+  }
+
+  template <class CharT, class Traits>
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type& dist) -> std::basic_ostream<CharT, Traits>&
+  {
+    os << dist.p_.range << ' ' << dist.p_.digits;
+    return os;
+  }
+
+  template <class CharT, class Traits>
+  friend auto operator>>(std::basic_istream<CharT, Traits>& is, distribution_type& dist) -> std::basic_istream<CharT, Traits>&
+  {
+    param_type p;
+    is >> std::ws >> p.range >> std::ws >> p.digits;
+    if (is) dist.p_ = p;
+    return is;
+  }
+
+private:
+  template <typename URNG>
+  IntT eval(URNG& reng, const param_type& p, std::true_type) const
+  { // sufficient digits in URNG
+    const int shift = rndutils::detail::urng_range<URNG>::digits - p.digits;
+    UIntT x;
+    do
+    {
+      x = static_cast<UIntT>(reng() >> shift);
+    } while (x > p.range);
+    return static_cast<IntT>(x);
+  }
+
+  template <typename URNG>
+  IntT eval(URNG& reng, const param_type& p, std::false_type) const
+  { // insufficient digits in URNG
+    using urng_range = rndutils::detail::urng_range<URNG>;
+    const auto mask = ~(static_cast<UIntT>(-1) << p.digits);
+    UIntT x;
+    do
+    {
+      x = static_cast<UIntT>(0);
+      for (int b = 0; b < p.digits_; b += urng_range::digits) {
+        x <<= urng_range::digits;
+        x ^= static_cast<UIntT>(reng());
+      }
+      x &= mask;
+    } while (x > p.range);
+    return static_cast<IntT>(x);
   }
 
   param_type p_;
@@ -822,8 +938,8 @@ public:
   static constexpr result_type(min)() { return false; }
   static constexpr result_type(max)() { return true; }
 
-  binary_distribution() : 
-    bits_(1)  // set stop-bit
+  binary_distribution()
+  : bits_(1)  // set stop-bit
   {
   }
 
@@ -861,22 +977,22 @@ public:
   }
 
   template <typename URNG>
-  result_type operator()(URNG& reng, param_type const& /*param*/)
+  result_type operator()(URNG& reng, const param_type& /*param*/)
   {
     return this->operator()(reng);
   }
 
-  friend bool operator==(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator==(const distribution_type& lhs, const distribution_type& rhs)
   {
     return true;
   }
-  friend bool operator!=(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator!=(const distribution_type& lhs, const distribution_type& rhs)
   {
     return false;
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const& dist) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type& dist) -> std::basic_ostream<CharT, Traits>&
   { // output streaming
     return os << dist.bits_;
   }
@@ -892,92 +1008,6 @@ public:
 
 private:
   bits_type bits_;
-};
-
-
-// binomial distribution with p=0.5.
-// direct pop-count sampling, potentially very fast for small n, up to n~10000. 
-template <
-  typename ResT = int
->
-class binomial50_small_distribution
-{
-public:
-  using distribution_type = binomial50_small_distribution;
-  using result_type = ResT;
-  using param_type = result_type;
-
-  static constexpr result_type(min)() { return result_type{ 0 }; }
-  static constexpr result_type(max)() { return result_type{ std::numeric_limits<result_type>::max() }; }
-
-  explicit binomial50_small_distribution(result_type n) : 
-    param_{ n }
-  {
-  }
-
-  param_type param() const
-  { // return parameter package
-    return param_;
-  }
-
-  void param(param_type param)
-  { // set parameter package
-    param_ = param;
-  }
-
-  void reset()
-  {
-  }
-
-  template <typename URNG>
-  result_type operator()(URNG& reng) const
-  {
-    return eval(param_, reng);
-  }
-
-  template <typename URNG>
-  result_type operator()(URNG& reng, param_type param) const
-  {
-    return eval(param, reng);
-  }
-
-  friend bool operator==(distribution_type const& lhs, distribution_type const& rhs)
-  {
-    return lhs.param_ == rhs.param_;
-  }
-  friend bool operator!=(distribution_type const& lhs, distribution_type const& rhs)
-  {
-    return lhs.param_ != rhs.param_;
-  }
-
-  template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const& dist) -> std::basic_ostream<CharT, Traits>&
-  { // output streaming
-    return os << dist.param_;
-  }
-
-  template <class CharT, class Traits>
-  friend auto operator>>(std::basic_istream<CharT, Traits>& is, distribution_type& dist) -> std::basic_istream<CharT, Traits>&
-  { // input streaming
-    is >> std::ws >> dist.param_;
-    return is;
-  }
-
-private:
-  template <typename URNG>
-  result_type eval(param_type n, URNG& reng) const
-  {
-    if (n == 0) return 0;
-    using ur = detail::urng_range<URNG>;
-    int64_t s = 0;
-    for (; n > ur::digits; n -= ur::digits) {
-      s += static_cast<int64_t>(detail::popcount(reng()));
-    }
-    const auto mask = typename ur::result_type(-1) >> (ur::digits - n);
-    return static_cast<result_type>(s + static_cast<int64_t>(detail::popcount(reng() & mask)));
-  }
-
-  param_type param_;
 };
 
 
@@ -997,7 +1027,7 @@ struct all_zero_policy_uni {};
 
 // Replacement for std::discrete_distribution.
 // Use it if your distribution is non-const and you want
-// to avoid the extra memory allocation to produce a fresh
+// to avoid the extra memory allocation to produce d fresh
 // std::discrete_distribution or you are not satisfied 
 // with the behavior of std::discrete_distribution in the
 // case that all elements are zero.
@@ -1033,7 +1063,7 @@ public:
   { // default ctor
   }
 
-  explicit mutable_discrete_distribution(param_type const& param)
+  explicit mutable_discrete_distribution(const param_type& param)
   {
     mutate(param.cbegin(), param.cend());
   }
@@ -1044,7 +1074,7 @@ public:
     mutate(first, last);
   }
 
-  void param(param_type const& param)
+  void param(const param_type& param)
   {
     mutate(param.cbegin(), param.cend());
   }
@@ -1080,7 +1110,7 @@ public:
   }
 
   template <typename Reng>
-  result_type operator()(Reng& reng, param_type const& param) const
+  result_type operator()(Reng& reng, const param_type& param) const
   {
     return distribution_type(param)(reng);
   }
@@ -1094,7 +1124,7 @@ public:
   }
 
   template <typename W>
-  void mutate(W const& w)
+  void mutate(const W& w)
   {
     mutate_transform_partial(w.cbegin(), w.cend(), 0, [](weight_type w) {
       return w;
@@ -1110,7 +1140,7 @@ public:
   }
 
   template <typename W>
-  void mutate_partial(W const& w, size_t ofs)
+  void mutate_partial(const W& w, size_t ofs)
   {
     mutate_transform_partial(w.cbegin(), w.cend(), ofs, [](weight_type w) {
       return w;
@@ -1130,7 +1160,7 @@ public:
   }
 
   template <typename W, typename Fun>
-  void mutate_transform(W const& w, Fun fun)
+  void mutate_transform(const W& w, Fun fun)
   {
     mutate_transform_partial(w.cbegin(), w.cend(), 0, fun);
   }
@@ -1161,18 +1191,18 @@ public:
     apply_all_zero_policy(sum, AllZeroPolicy{});
   }
 
-  friend bool operator==(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator==(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.cdf_ == rhs.cdf_;
   }
 
-  friend bool operator!=(distribution_type const& lhs, distribution_type const& rhs)
+  friend bool operator!=(const distribution_type& lhs, const distribution_type& rhs)
   {
     return lhs.cdf_ != rhs.cdf_;
   }
 
   template <class CharT, class Traits>
-  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, distribution_type const& dist) -> std::basic_ostream<CharT, Traits>&
+  friend auto operator<<(std::basic_ostream<CharT, Traits>& os, const distribution_type& dist) -> std::basic_ostream<CharT, Traits>&
   { // output streaming
     os << dist.cdf_.size();
     for (auto p : dist.cdf_) os << ' ' << p;
@@ -1268,6 +1298,84 @@ inline void shuffle_n(RndIt first, RndIt last, SizeT n, URNG&& reng)
     swap(first[i], first[d(reng)]);
   }
 }
+
+
+// shuffle generator
+template <typename RndIt>
+class shuffle_sampler
+{
+public:
+  using difference_type = typename std::iterator_traits<RndIt>::difference_type;
+  using value_type = typename std::iterator_traits<RndIt>::value_type;
+
+  shuffle_sampler(RndIt first, RndIt last)
+    : current_(0), n_(std::distance(first, last)), first_(first)
+  {
+  }
+
+  shuffle_sampler(RndIt first, difference_type n)
+    : current_(0), n_(n), first_(first)
+  {
+  }
+
+  template <typename URNG>
+  std::pair<bool, value_type> operator()(URNG&& reng)
+  {
+    if (current_ < n_) {
+      uniform_signed_distribution<difference_type> d(current_, n_ - 1);
+      std::iter_swap(first_ + current_, first_ + d(reng));
+      return { true, first_[current_++] };
+    }
+    return { false, value_type{} };
+  }
+
+  void reset() { current_ = 0; }
+
+private:
+  difference_type current_;
+  difference_type n_;
+  RndIt first_;
+};
+
+
+template <typename RndIt>
+inline shuffle_sampler<RndIt>
+make_shuffle_sampler(RndIt first, RndIt last)
+{
+  return shuffle_sampler<RndIt>(first, last);
+}
+
+
+template <typename RndIt>
+inline shuffle_sampler<RndIt>
+make_shuffle_sampler(RndIt first, typename std::iterator_traits<RndIt>::difference_type n)
+{
+  return shuffle_sampler<RndIt>(first, n);
+}
+
+
+template <typename T = int>
+class iota_gap_sampler
+{
+public:
+  using value_type = T;
+
+  explicit iota_gap_sampler(double p, value_type i0 = 0) : p_(p), i_(i0) {}
+
+  iota_gap_sampler& reset(value_type i0) { i_ = i0; return *this; }
+
+  template <typename URENG>
+  value_type operator()(URENG& reng)
+  {
+    return i_ += p_(reng);
+  }
+
+private:
+  std::geometric_distribution<value_type> p_;
+  value_type i_;
+};
+
+
 }
 
 
@@ -1281,7 +1389,7 @@ inline void shuffle_n(RndIt first, RndIt last, SizeT n, URNG&& reng)
 
 #define RNDUTILS_FAST_GENERATE_CANONICAL_REAL_BITS(Real, Bits, URNG)     \
   template <>                                                            \
-  inline Real generate_canonical<Real, Bits, URNG>(URNG & reng) noexcept \
+  inline Real generate_canonical<Real, Bits, URNG>(URNG & reng)          \
   {                                                                      \
     return rndutils::detail::generate_canonical<Real, Bits, URNG>(reng); \
   }

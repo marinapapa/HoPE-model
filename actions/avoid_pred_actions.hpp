@@ -1,11 +1,10 @@
 #ifndef AVOID_PRED_ACTIONS_HPP_INCLUDED
 #define AVOID_PRED_ACTIONS_HPP_INCLUDED
 
-#include "action_base.hpp"
+#include "model/action_base.hpp"
 #include <glmutils/ray.hpp>
 #include <glmutils/random.hpp>
 #include "model/while_topo.hpp"
-#include "predator.hpp"
 
 namespace model {
   namespace actions {

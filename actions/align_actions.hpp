@@ -2,7 +2,7 @@
 #define ALIGN_ACTIONS_HPP_INCLUDED
 
 #include "model/while_topo.hpp"
-#include "action_base.hpp"
+#include "model/action_base.hpp"
 
 
 namespace model {
@@ -21,7 +21,7 @@ namespace model {
       {
         topo = J["topo"];     // [1]
         auto fov = J["fov"];  // [deg]
-        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - fov))); // [1]
+        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - float(fov)))); // [1]
 
         // max distance
         float maxdist = J["maxdist"];    // [m]

@@ -2,13 +2,20 @@
 #define ANALYSIS_HPP_INCLUDED
 
 #include <iostream>
+#ifdef WIN32
 #include "simgl/AppWin.h"
+#endif
 #include <filesystem>
 #include <deque>
 #include <sstream>
 #include <cstring>
 #include <cstdlib>
 #include <time.h>
+#include "model/flock.hpp"
+#include "model/simulation.hpp"
+#include "model/observer.hpp"
+#include "math.hpp"
+#include "torus.hpp"
 using namespace model;
 
 namespace analysis
@@ -116,9 +123,13 @@ namespace analysis
 		auto distr = std::uniform_int_distribution<int>(0, 1000);
 		const auto random_id = std::to_string(distr(model::reng));
 
-		struct tm local_time;
-		const time_t now = time(0);
+		struct std::tm local_time;
+	    const std::time_t now = time(0);
+#ifdef WIN32
 		localtime_s(&local_time, &now);
+#else
+		localtime_r(&now, &local_time);
+#endif
 		const time_t ttime = time(0);
 
 		const std::string thyear = std::to_string(1900 + local_time.tm_year);
@@ -168,7 +179,7 @@ namespace analysis
 
     for (auto i : data_out)
     {
-      do_write_csv<P, DecType::value_type>::write_in_csv(outFile, i);
+      do_write_csv<P, typename DecType::value_type>::write_in_csv(outFile, i);
     }
   }
 
@@ -200,7 +211,7 @@ namespace analysis
 		outFile << header << std::endl;
 		for (auto i : data_out) 
 		{
-			do_write_csv<P, DecType::value_type>::write_in_csv(outFile, i);
+			do_write_csv<P, typename DecType::value_type>::write_in_csv(outFile, i);
 		}
 		outFile.close();
 	}
@@ -215,7 +226,7 @@ namespace analysis
 		outFile.open(full_path, std::ios_base::app);
 		for (auto i : data_out)
 		{
-			do_write_csv<P, DecType::value_type>::write_in_csv(outFile, i);
+			do_write_csv<P, typename DecType::value_type>::write_in_csv(outFile, i);
 		}
 		outFile.close();
 	}

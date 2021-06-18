@@ -1,7 +1,7 @@
 #ifndef MODEL_STATES_PERSISTENT_HPP_INCLUDED
 #define MODEL_STATES_PERSISTENT_HPP_INCLUDED
 
-#include "state_base.hpp"
+#include "model/state_base.hpp"
 
 
 namespace model {

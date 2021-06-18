@@ -195,6 +195,8 @@ namespace analysis
 			case Msg::Finished:
 				notify_save(sim);
 				break;
+			default:
+			  break;
 			}
 			//notify_next(lmsg, sim);
 		}

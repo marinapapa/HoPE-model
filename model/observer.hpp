@@ -2,6 +2,10 @@
 #define MODEL_OBSERVER_HPP_INCLUDED
 
 #include <deque>
+#include <filesystem>
+#include <string>
+#include "model/model.hpp"
+
 
 namespace model {
 
@@ -77,6 +81,8 @@ namespace model {
 		  case Msg::Finished:
 			  notify_save(sim);
 			  break;
+      default:
+        break;
 		  }
 		  notify_next(lmsg, sim);
 	  }

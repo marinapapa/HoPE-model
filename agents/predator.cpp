@@ -1,4 +1,5 @@
 #include "predator.hpp"
+#include "pigeon.hpp"
 #include "model/init_cond.hpp"
 
 

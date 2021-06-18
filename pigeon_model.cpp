@@ -5,6 +5,7 @@
 #include <tbb/tbb.h>
 #include "model/json.hpp"
 #include "model/model.hpp"
+#include "agents/agents.hpp"
 #ifdef WIN32
 # include "simgl/AppWin.h"
 #endif

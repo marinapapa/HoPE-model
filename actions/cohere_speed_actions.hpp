@@ -1,7 +1,7 @@
 #ifndef COHERE_SPEED_ACTIONS_HPP_INCLUDED
 #define COHERE_SPEED_ACTIONS_HPP_INCLUDED
 
-#include "action_base.hpp"
+#include "model/action_base.hpp"
 
 namespace model {
   namespace actions {
@@ -22,7 +22,7 @@ namespace model {
 
         auto fov = J["fov"]; // [deg]
         ffov = J["ffov"];    // [deg]
-        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - fov))); // [1]
+        cfov = glm::cos(glm::radians(180.0f - 0.5f * (360.0f - float(fov)))); // [1]
 
 		    float maxdist = J["maxdist"];     // [m]
 		    maxdist2 = maxdist * maxdist;     // [m^2]
