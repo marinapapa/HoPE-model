@@ -21,7 +21,7 @@ To build the software under Linux (Debian packet system):
 
 # The model
 
-<div style="text-align:center"><img src="simulation_screenshot.png" /></div>
+![alt text](https://github.com/marinapapa/HoPE-model/blob/main/simulation_screenshot.PNG)
 
 ## _Framework_ 
 
