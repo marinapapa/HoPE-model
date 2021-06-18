@@ -21,6 +21,8 @@ To build the software under Linux (Debian packet system):
 
 # The model
 
+<div style="text-align:center"><img src="simulation_screenshot.png" /></div>
+
 ## _Framework_ 
 
 This model is based on self-organization and includes pigeons-like and predator-like agents. Agents interact with their surrounding neighbors based on the rules of attraction, alignment and avoidance. Pigeon-agents (prey) flock together and avoid the predator. Predator-agents chase and attack pigeon-agents. Cathes of prey are not modelled.
@@ -109,5 +111,5 @@ The config is also copied to the saving directory, along with an empty txt file 
 In its current state, the model exports (1) timeseries of positions, heading, speed etc for each agent, (2) timeseries on information of the neighbors of each agent (id, distance to, bearing angle etc), (3) information about the flock(s) that form during the simulation, (4) timeseries of the effect of coorindation forces acting on each agent. More observers are present in the model and can be used by including them in the config file.
 
 ## Authors
-* **Marina Papadopoulou** - PhD student - For any problem email at: <m.papadopoulou@rug.nl>
+* **Marina Papadopoulou** - PhD student - For any problem email at: <m.papadopoulou.rug@gmail.com>
 * **Dr. Hanno Hildenbrandt** - PhD supervisor
